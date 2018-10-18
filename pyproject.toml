@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "ankix"
 version = "0.1.0"
-description = "New format for Anki, available on Jupyter Notebook"
-authors = ["patarapolw <patarapolw@gmail.com>"]
+description = "New file format for Anki with improved review intervals and Peewee SQLite powered"
+authors = ["Pacharapol Withayasakpunt <patarapolw@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/patarapolw/ankix"
+homepage = "https://github.com/patarapolw/ankix"
+keywords = ["anki", "spaced-repetition", "SRS"]
 
 [tool.poetry.dependencies]
 python = "*"
