@@ -1,0 +1,505 @@
+{
+  "tables": {
+    "col": {
+      "id": 1,
+      "crt": 1470470400,
+      "mod": 1520717231157,
+      "scm": 1520717230589,
+      "ver": 11,
+      "dty": 0,
+      "usn": 0,
+      "ls": 0,
+      "conf": "See below",
+      "models": "See below",
+      "decks": "See below",
+      "dconf": "See below",
+      "tags": "See below"
+    },
+    "notes": {
+      "id": 1520716965128,
+      "guid": "HsLu8`maHl",
+      "mid": 1496733135171,
+      "mod": 1520716980,
+      "usn": 0,
+      "tags": " A1 Adverbs Parts_of_Speech ",
+      "flds": "我没有问题。\u001fWǒ méiyǒu wèntí.\u001fI don't have any questions.\u001f\u001f\u001fNegation of \"you\" with \"mei\"\u001f没 + 有 (+ Obj.)\u001fhttps://resources.allsetlearning.com/chinese/grammar/ASGPNV3Q",
+      "sfld": "我没有问题。",
+      "csum": 2429658004,
+      "flags": 0,
+      "data": ""
+    },
+    "cards": {
+      "id": 1520716970992,
+      "nid": 1520716965128,
+      "did": 1496896533573,
+      "ord": 0,
+      "mod": 1520716965,
+      "usn": 0,
+      "type": 0,
+      "queue": 0,
+      "due": 1,
+      "ivl": 0,
+      "factor": 0,
+      "reps": 0,
+      "lapses": 0,
+      "left": 0,
+      "odue": 0,
+      "odid": 0,
+      "flags": 0,
+      "data": ""
+    }
+  },
+  "col": {
+    "conf": {
+      "collapseTime": 1200,
+      "estTimes": true,
+      "activeDecks": [
+        1
+      ],
+      "curModel": "1520717230590",
+      "newBury": true,
+      "addToCur": true,
+      "sortBackwards": false,
+      "sortType": "noteFld",
+      "dueCounts": true,
+      "dayLearnFirst": false,
+      "curDeck": 1,
+      "timeLim": 0,
+      "nextPos": 1,
+      "newSpread": 0
+    },
+    "models": {
+      "1496888165918": {
+        "usn": 0,
+        "req": [
+          [
+            0,
+            "all",
+            [
+              0
+            ]
+          ]
+        ],
+        "vers": [],
+        "mod": 1520717165,
+        "type": 0,
+        "id": 1496888165918,
+        "css": ".card {\nfont-family: arial;\nfont-size: 30px;\ntext-align: center;\ncolor: black;\nbackground-color: white;\n}\n\n.header {\nfont-family: arial;\nfont-size: 16px;\n}\n\n.hanzi {\nfont-family: SimSun;\nfont-size: 28px;\n}\n\n.pinyin {\ncolor: gray;\n}\n\n.translation {\nfont-size: 26px;\n}\n\n.lessonInfoHanzi {\nfont-family: SimSun;\nfont-size: 12px;\n}\n\n.lessonInfo {\nfont-family: arial;\nfont-size: 10px;\n}\n\n.correct {\nfont-family: arial;\nfont-size: 26px;\ncolor: green;\nfont-weight: bold;\n}\n\n\n.english {\nfont-family: arial;\nfont-size: 20px;\n}\n\n.notes {\nfont-family: arial;\nfont-size: 12px;\ncolor: gray;\n}\n\n.spacer {\nheight: 20px;\n}\n\n.spacerSmall {\nheight: 3px;\n}\n\n.spacerMedium {\nheight: 10px;\n}.card {\nfont-family: arial;\nfont-size: 30px;\ntext-align: center;\ncolor: black;\nbackground-color: white;\n}\n\n.hanzi {\nfont-family: SimSun;\nfont-size: 28px;\n}\n\n.pinyin {\ncolor: gray;\n}\n\n.translation {\nfont-size: 26px;\n}\n\n.lessonInfoHanzi {\nfont-family: SimSun;\nfont-size: 12px;\n}\n\n.lessonInfo {\nfont-family: arial;\nfont-size: 10px;\n}\n\n.english {\nfont-family: arial;\nfont-size: 20px;\n}\n\n.notes {\nfont-family: arial;\nfont-size: 12px;\ncolor: gray;\n}\n\n.spacer {\nheight: 20px;\n}\n\n.spacerSmall {\nheight: 3px;\n}\n\n.spacerMedium {\nheight: 10px;\n}\n",
+        "tags": [],
+        "name": "CGW-ValidExample",
+        "latexPre": "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+        "latexPost": "\\end{document}",
+        "sortf": 0,
+        "did": 1496723728372,
+        "flds": [
+          {
+            "ord": 0,
+            "name": "中文",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 1,
+            "name": "Pinyin",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 2,
+            "name": "English",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 3,
+            "name": "Notes",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 4,
+            "name": "Example Type",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 5,
+            "name": "Article Title",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 6,
+            "name": "Grammar Construct",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 7,
+            "name": "Source URL",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          }
+        ],
+        "tmpls": [
+          {
+            "ord": 0,
+            "afmt": "<div class=\"hanzi\">{{中文}}</div>\n\n<div class=\"english\">\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"pinyin\">{{Pinyin}}</div>\n\t<div class=\"spacerSmall\"> </div>\n\t{{English}}\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"correct\">Correct!</div>\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"notes\">{{Notes}}</div>\n</div>\n\n\n<div class=\"lessonInfo\">\n<div class=\"spacer\"> </div>\n<div>Pattern: <span class=\"lessonInfoHanzi\">{{Grammar Construct}}</span></div>\nArticle: <a href={{Source URL}}>{{Article Title}}</a>\n</div>",
+            "name": "Valid",
+            "bafmt": "",
+            "qfmt": "<div class=\"header\">Is this sentence grammatically correct?</div>\n<div class=\"spacer\"> </div>\n<div class=\"hanzi\">{{中文}}</div>",
+            "bqfmt": "",
+            "did": null
+          }
+        ]
+      },
+      "1496733135171": {
+        "usn": 0,
+        "req": [
+          [
+            0,
+            "all",
+            [
+              0
+            ]
+          ]
+        ],
+        "vers": [],
+        "mod": 1520717054,
+        "type": 0,
+        "id": 1496733135171,
+        "css": ".card {\nfont-family: arial;\nfont-size: 30px;\ntext-align: center;\ncolor: black;\nbackground-color: white;\n}\n\n.hanzi {\nfont-family: SimSun;\nfont-size: 28px;\n}\n\n.pinyin {\ncolor: gray;\n}\n\n.translation {\nfont-size: 26px;\n}\n\n.lessonInfoHanzi {\nfont-family: SimSun;\nfont-size: 12px;\n}\n\n.lessonInfo {\nfont-family: arial;\nfont-size: 10px;\n}\n\n.english {\nfont-family: arial;\nfont-size: 20px;\n}\n\n.notes {\nfont-family: arial;\nfont-size: 12px;\ncolor: gray;\n}\n\n.spacer {\nheight: 20px;\n}\n\n.spacerSmall {\nheight: 3px;\n}\n\n.spacerMedium {\nheight: 10px;\n}\n",
+        "tags": [],
+        "name": "Chinese Grammar Wiki",
+        "latexPre": "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+        "latexPost": "\\end{document}",
+        "sortf": 0,
+        "did": 1496896533573,
+        "flds": [
+          {
+            "ord": 0,
+            "name": "中文",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 1,
+            "name": "Pinyin",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 2,
+            "name": "English",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 3,
+            "name": "Notes",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 4,
+            "name": "Example Type",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 5,
+            "name": "Article Title",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 6,
+            "name": "Grammar Construct",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 7,
+            "name": "Source URL",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          }
+        ],
+        "tmpls": [
+          {
+            "ord": 0,
+            "afmt": "{{FrontSide}}\n<div class=\"spacer\"> </div>\n<div class=\"english\">\n\t<div class=\"pinyin\">{{Pinyin}}</div>\n\t<div class=\"spacerSmall\"> </div>\n\t{{English}}\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"notes\">{{Notes}}</div>\n</div>\n\n\n<div class=\"lessonInfo\">\n<div class=\"spacer\"> </div>\n<div>Pattern: <span class=\"lessonInfoHanzi\">{{Grammar Construct}}</span></div>\nArticle: <a href={{Source URL}}>{{Article Title}}</a>\n</div>",
+            "name": "Translation",
+            "bafmt": "",
+            "qfmt": "<div class=\"hanzi\">{{中文}}</div>",
+            "bqfmt": "",
+            "did": null
+          }
+        ]
+      },
+      "1496888133048": {
+        "usn": 0,
+        "latexPre": "\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n",
+        "vers": [],
+        "mod": 1520717129,
+        "sortf": 0,
+        "type": 0,
+        "id": 1496888133048,
+        "css": ".card {\nfont-family: arial;\nfont-size: 30px;\ntext-align: center;\ncolor: black;\nbackground-color: white;\n}\n\n.header {\nfont-family: arial;\nfont-size: 16px;\n}\n\n.hanzi {\nfont-family: SimSun;\nfont-size: 28px;\n}\n\n.pinyin {\ncolor: gray;\n}\n\n.translation {\nfont-size: 26px;\n}\n\n.lessonInfoHanzi {\nfont-family: SimSun;\nfont-size: 12px;\n}\n\n.lessonInfo {\nfont-family: arial;\nfont-size: 10px;\n}\n\n.incorrect {\nfont-family: arial;\nfont-size: 26px;\ncolor: red;\nfont-weight: bold;\n}\n\n\n.english {\nfont-family: arial;\nfont-size: 20px;\n}\n\n.notes {\nfont-family: arial;\nfont-size: 12px;\ncolor: gray;\n}\n\n.spacer {\nheight: 20px;\n}\n\n.spacerSmall {\nheight: 3px;\n}\n\n.spacerMedium {\nheight: 10px;\n}\n",
+        "tags": [],
+        "name": "CGW-InvalidExample",
+        "latexPost": "\\end{document}",
+        "req": [
+          [
+            0,
+            "all",
+            [
+              0
+            ]
+          ]
+        ],
+        "did": 1496723728372,
+        "flds": [
+          {
+            "ord": 0,
+            "name": "中文",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 1,
+            "name": "Pinyin",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 2,
+            "name": "English",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 3,
+            "name": "Notes",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 4,
+            "name": "Example Type",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 5,
+            "name": "Article Title",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 6,
+            "name": "Grammar Construct",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          },
+          {
+            "ord": 7,
+            "name": "Source URL",
+            "font": "Arial",
+            "sticky": false,
+            "size": 20,
+            "rtl": false,
+            "media": []
+          }
+        ],
+        "tmpls": [
+          {
+            "ord": 0,
+            "afmt": "<div class=\"hanzi\">{{中文}}</div>\n\n<div class=\"english\">\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"pinyin\">{{Pinyin}}</div>\n\t<div class=\"spacerSmall\"> </div>\n\t{{English}}\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"incorrect\">Not correct!</div>\n\t<div class=\"spacerMedium\"> </div>\n\t<div class=\"notes\">{{Notes}}</div>\n</div>\n\n\n<div class=\"lessonInfo\">\n<div class=\"spacer\"> </div>\n<div>Pattern: <span class=\"lessonInfoHanzi\">{{Grammar Construct}}</span></div>\nArticle: <a href={{Source URL}}>{{Article Title}}</a>\n</div>",
+            "name": "Invalid",
+            "bafmt": "",
+            "qfmt": "<div class=\"header\">Is this sentence grammatically correct?</div>\n<div class=\"spacer\"> </div>\n<div class=\"hanzi\">{{中文}}</div>",
+            "bqfmt": "",
+            "did": null
+          }
+        ]
+      }
+    },
+    "decks": {
+      "1": {
+        "usn": 0,
+        "collapsed": false,
+        "timeToday": [
+          0,
+          0
+        ],
+        "mod": 1520717228,
+        "dyn": 0,
+        "extendRev": 50,
+        "desc": "",
+        "lrnToday": [
+          0,
+          0
+        ],
+        "id": 1,
+        "conf": 1,
+        "name": "Default",
+        "extendNew": 10,
+        "newToday": [
+          0,
+          0
+        ],
+        "revToday": [
+          0,
+          0
+        ]
+      },
+      "1496896533573": {
+        "usn": -1,
+        "collapsed": false,
+        "extendRev": 50,
+        "desc": "Please see the <a href='https://ankiweb.net/shared/info/782551504'>shared deck page</a> for more info.",
+        "lrnToday": [
+          581,
+          4
+        ],
+        "conf": 1,
+        "mid": 1496888165918,
+        "id": 1496896533573,
+        "timeToday": [
+          581,
+          453758
+        ],
+        "dyn": 0,
+        "mod": 1520717231,
+        "browserCollapsed": true,
+        "name": "Chinese Grammar Wiki",
+        "extendNew": 2,
+        "newToday": [
+          581,
+          4
+        ],
+        "revToday": [
+          581,
+          32
+        ]
+      }
+    },
+    "dconf": {
+      "1": {
+        "mod": 0,
+        "lapse": {
+          "delays": [
+            10
+          ],
+          "leechAction": 0,
+          "leechFails": 8,
+          "minInt": 1,
+          "mult": 0
+        },
+        "usn": 0,
+        "new": {
+          "ints": [
+            1,
+            4,
+            7
+          ],
+          "separate": true,
+          "initialFactor": 2500,
+          "delays": [
+            1,
+            10
+          ],
+          "perDay": 20,
+          "bury": true,
+          "order": 1
+        },
+        "name": "Default",
+        "replayq": true,
+        "rev": {
+          "ease4": 1.3,
+          "ivlFct": 1,
+          "maxIvl": 36500,
+          "minSpace": 1,
+          "perDay": 100,
+          "fuzz": 0.05,
+          "bury": true
+        },
+        "maxTaken": 60,
+        "timer": 0,
+        "autoplay": true,
+        "id": 1
+      }
+    },
+    "tags": {}
+  }
+}
