@@ -1,9 +1,12 @@
 import peewee as pv
 from playhouse import sqlite_ext
 from playhouse.shortcuts import model_to_dict
+
 from datetime import datetime, timedelta
 import random
 import sys
+import datauri
+import re
 
 from .config import config
 from .jupyter import HTML
@@ -36,6 +39,39 @@ class Tag(BaseModel):
         d['notes'] = [repr(n) for n in self.notes]
 
         return d
+
+
+class Media(BaseModel):
+    name = pv.TextField(unique=True)
+    data = pv.BlobField()
+    # notes
+
+    def __repr__(self):
+        return f'<Media: "{self.name}">'
+
+    @property
+    def src(self):
+        return datauri.build(bytes(self.data))
+
+    @property
+    def html(self):
+        return f'<img src="{self.src}" />'
+
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['data'] = self.html
+        d['notes'] = [repr(n) for n in self.notes]
+
+        return d
+
+    viewer_config = {
+        'renderer': {
+            'data': 'html'
+        },
+        'colWidth': {
+            'data': 600
+        }
+    }
 
 
 class Model(BaseModel):
@@ -101,6 +137,7 @@ class Deck(BaseModel):
 
 class Note(BaseModel):
     data = sqlite_ext.JSONField()
+    medias = pv.ManyToManyField(Media, backref='notes', on_delete='cascade')
     tags = pv.ManyToManyField(Tag, backref='notes', on_delete='cascade')
 
     def mark(self, tag):
@@ -127,12 +164,14 @@ class Note(BaseModel):
 
 
 NoteTag = Note.tags.get_through_model()
+NoteMedia = Note.medias.get_through_model()
 
 
 class Card(BaseModel):
     note = pv.ForeignKeyField(Note, backref='cards')
     deck = pv.ForeignKeyField(Deck, backref='cards')
     template = pv.ForeignKeyField(Template, backref='cards')
+    cloze_order = pv.IntegerField(null=True)
     srs_level = pv.IntegerField(null=True)
     next_review = pv.DateTimeField(null=True)
 
@@ -157,17 +196,38 @@ class Card(BaseModel):
         }
     }
 
+    def _pre_render(self, html, is_question):
+        for k, v in self.note.data.items():
+            html = html.replace('{{%s}}' % k, v)
+            html = html.replace('{{cloze:%s}}' % k, v)
+            if self.cloze_order is not None:
+                if is_question:
+                    html = re.sub(r'{{c%d::([^}]+)}}' % self.cloze_order,
+                                  '[...]', html)
+
+                html = re.sub(r'{{c\d+::([^}]+)}}',
+                              '\g<1>', html)
+
+        return html
+
     @property
     def question(self):
+        html = self._pre_render(self.template.question, is_question=True)
+
         return HTML(
-            self.template.question.format().format(**self.note.data),
+            html,
+            medias=self.note.medias,
             css=self.css
         )
 
     @property
     def answer(self):
+        html = self._pre_render(self.template.answer, is_question=False)
+        html = html.replace('{{FrontSide}}', self.question.raw)
+
         return HTML(
-            self.template.answer.format().format(FrontSide=self.question.raw, **self.note.data),
+            html,
+            medias=self.note.medias,
             css=self.css
         )
 

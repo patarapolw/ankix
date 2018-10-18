@@ -10,10 +10,12 @@ class Ankix:
         })
 
         from . import db
-        # Tag Model Template Deck Note Card
+        # Tag Media Model Template Deck Note Card
+        db.create_all_tables()
 
         self.tables = {
             'tag': db.Tag,
+            'media': db.Media,
             'model': db.Model,
             'template': db.Template,
             'deck': db.Deck,

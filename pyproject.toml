@@ -9,6 +9,7 @@ python = "*"
 peewee = "^3.7"
 tqdm = "^4.27"
 mistune = "^0.8.4"
+datauri = {git = "https://github.com/patarapolw/python-data-uri.git"}
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0"

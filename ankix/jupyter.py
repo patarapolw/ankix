@@ -7,11 +7,16 @@ markdown = mistune.Markdown()
 
 
 class HTML:
-    def __init__(self, html, css=''):
+    def __init__(self, html, medias=None, css=''):
+        if medias is None:
+            medias = []
+
+        self.medias = medias
+
         if config['markdown'] or not is_html(html):
-            self.raw = markdown(html)
+            self._raw = markdown(html)
         else:
-            self.raw = html
+            self._raw = html
 
         self.css = css
 
@@ -31,3 +36,12 @@ class HTML:
         <br/>
         {self.raw}
         '''
+
+    @property
+    def raw(self):
+        result = self._raw
+
+        for image in self.medias:
+            result = result.replace(image.name, image.src)
+
+        return result

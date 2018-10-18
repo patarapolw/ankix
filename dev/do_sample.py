@@ -44,4 +44,5 @@ def get_miscellaneous(src='collection.anki2', dst='sample.json'):
 
 
 if __name__ == '__main__':
+    get_tables()
     get_miscellaneous()
