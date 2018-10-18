@@ -247,5 +247,9 @@ pip-selfcheck.json
 # End of https://www.gitignore.io/api/osx,python,pycharm,jupyternotebook
 
 *.apkg
+*.anki2
 *.ankix
 *.db
+**/media
+.vscode/
+.idea/
