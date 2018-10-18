@@ -94,13 +94,14 @@ def from_apkg(src_apkg, dst_ankix=None):
                             template_id=db_template.id
                         )
                     else:
-                        db.Card.create(
-                            id=card['id'],
-                            note_id=card['nid'],
-                            deck_id=card['did'],
-                            cloze_order=card['ord']+1,
-                            template_id=db_template.id
-                        )
+                        for db_template_n in db_model.templates:
+                            db.Card.create(
+                                id=card['id'],
+                                note_id=card['nid'],
+                                deck_id=card['did'],
+                                cloze_order=card['ord']+1,
+                                template_id=db_template_n.id
+                            )
 
                 for db_deck in db.Deck.select():
                     if not db_deck.cards:
