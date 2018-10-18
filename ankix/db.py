@@ -1,5 +1,6 @@
 import peewee as pv
 from playhouse import sqlite_ext
+from playhouse.shortcuts import model_to_dict
 from datetime import datetime, timedelta
 import random
 import sys
@@ -11,28 +12,91 @@ database = sqlite_ext.SqliteDatabase(config['database'])
 
 
 class BaseModel(pv.Model):
+    viewer_config = dict()
+
+    @classmethod
+    def get_viewer(cls, records):
+        from htmlviewer import PagedViewer
+
+        return PagedViewer([r.to_viewer() for r in records], **cls.viewer_config)
+
     class Meta:
         database = database
 
 
 class Tag(BaseModel):
     name = pv.TextField(unique=True, collation='NOCASE')
+    # notes
+
+    def __repr__(self):
+        return f'<Tag: "{self.name}">'
+
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['notes'] = [repr(n) for n in self.notes]
+
+        return d
 
 
 class Model(BaseModel):
     name = pv.TextField(unique=True)
     css = pv.TextField()
+    # templates
+
+    def __repr__(self):
+        return f'<Model: "{self.name}">'
+
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['templates'] = [t.name for t in self.templates]
+
+        return d
 
 
 class Template(BaseModel):
     model = pv.ForeignKeyField(Model, backref='templates')
-    name = pv.TextField(unique=False)
+    name = pv.TextField()
     question = pv.TextField()
     answer = pv.TextField()
+
+    class Meta:
+        indexes = (
+            (('model_id', 'name'), True),
+        )
+
+    def __repr__(self):
+        return f'<Template: "{self.model.name}.{self.name}">'
+
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['model'] = self.model.name
+        d['cards'] = [repr(c) for c in self.cards]
+
+        return d
+
+    viewer_config = {
+        'renderer': {
+            'question': 'html',
+            'answer': 'html'
+        },
+        'colWidth': {
+            'question': 400,
+            'answer': 400
+        }
+    }
 
 
 class Deck(BaseModel):
     name = pv.TextField(unique=True)
+
+    def __repr__(self):
+        return f'<Deck: "{self.name}">'
+
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['cards'] = [repr(c) for c in self.cards]
+
+        return d
 
 
 class Note(BaseModel):
@@ -45,6 +109,22 @@ class Note(BaseModel):
     def unmark(self, tag):
         Tag.get_or_create(name=tag)[0].notes.remove(self)
 
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d['cards'] = '<br/>'.join(c.html for c in self.cards)
+        d['tags'] = [t.name for t in self.tags]
+
+        return d
+
+    viewer_config = {
+        'renderer': {
+            'cards': 'html'
+        },
+        'colWidth': {
+            'cards': 400
+        }
+    }
+
 
 NoteTag = Note.tags.get_through_model()
 
@@ -56,17 +136,38 @@ class Card(BaseModel):
     srs_level = pv.IntegerField(null=True)
     next_review = pv.DateTimeField(null=True)
 
+    def to_viewer(self):
+        d = model_to_dict(self)
+        d.update({
+            'question': str(self.question),
+            'answer': str(self.answer),
+            'tags': [t.name for t in self.note.tags]
+        })
+
+        return d
+
+    viewer_config = {
+        'renderer': {
+            'question': 'html',
+            'answer': 'html'
+        },
+        'colWidth': {
+            'question': 400,
+            'answer': 400
+        }
+    }
+
     @property
-    def front(self):
+    def question(self):
         return HTML(
             self.template.question.format().format(**self.note.data),
             css=self.css
         )
 
     @property
-    def back(self):
+    def answer(self):
         return HTML(
-            self.template.answer.format().format(FrontSide=self.front, **self.note.data),
+            self.template.answer.format().format(FrontSide=self.question.raw, **self.note.data),
             css=self.css
         )
 
@@ -74,14 +175,37 @@ class Card(BaseModel):
     def css(self):
         return self.template.model.css
 
+    @property
+    def html(self):
+        return f'''
+        <style>{self.css}</style>
+        <div id='c{self.id}'>
+            <br/>
+            <div id='q{self.id}'>{self.question.raw}</div>
+            <div id='a{self.id}' style='display: none;'>{self.answer.raw}</div>
+        </div>
+
+        <script>
+        function toggleHidden(el){{
+            if(el.style.display === 'none') el.style.display = 'block';
+            else el.style.display = 'none';
+        }}
+        
+        document.getElementById('c{self.id}').addEventListener('click', ()=>{{
+            toggleHidden(document.getElementById('q{self.id}'));
+            toggleHidden(document.getElementById('a{self.id}'));
+        }})
+        </script>
+        '''
+
     def _repr_html_(self):
-        return self.front.formatted
+        return self.html
 
     def hide(self):
-        return self.front
+        return self.question
 
     def show(self):
-        return self.back
+        return self.answer
 
     def mark(self, name='marked'):
         self.note.mark(name)

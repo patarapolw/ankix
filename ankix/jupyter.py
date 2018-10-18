@@ -9,25 +9,25 @@ markdown = mistune.Markdown()
 class HTML:
     def __init__(self, html, css=''):
         if config['markdown'] or not is_html(html):
-            self.html = markdown(html)
+            self.raw = markdown(html)
         else:
-            self.html = html
+            self.raw = html
 
         self.css = css
 
     def _repr_html_(self):
-        return self.formatted
+        return self.html
 
     def __repr__(self):
-        return self.formatted
+        return self.html
 
     def __str__(self):
-        return self.formatted
+        return self.html
 
     @property
-    def formatted(self):
+    def html(self):
         return f'''
         <style>{self.css}</style>
         <br/>
-        {self.html}
+        {self.raw}
         '''

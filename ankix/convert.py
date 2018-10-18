@@ -63,7 +63,7 @@ def from_apkg(src_apkg, dst_ankix=None):
                     data=dict(zip(header, note['flds'].split('\u001f')))
                 )
 
-                for tag in set(note['tags'].split(' ')):
+                for tag in set(t for t in note['tags'].split(' ') if t):
                     db_tag = db.Tag.get_or_create(
                         name=tag
                     )[0]
@@ -86,6 +86,9 @@ def from_apkg(src_apkg, dst_ankix=None):
                     template_id=db_template.id
                 )
 
+            for db_deck in db.Deck.select():
+                if not db_deck.cards:
+                    db_deck.delete_instance()
         finally:
             conn.close()
 

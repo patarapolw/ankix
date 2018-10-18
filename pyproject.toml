@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "ankix"
 version = "0.1.0"
-description = ""
+description = "New format for Anki, available on Jupyter Notebook"
 authors = ["patarapolw <patarapolw@gmail.com>"]
 
 [tool.poetry.dependencies]
