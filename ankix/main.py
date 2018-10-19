@@ -170,7 +170,7 @@ class Ankix:
 
                 if not skip_media:
                     if skip_media is False:
-                        skip_media = [MediaType.image, MediaType.audio, MediaType.font]
+                        skip_media = []
 
                     with open(os.path.join(temp_dir, 'media')) as f:
                         info_media = info.get('media', dict())
