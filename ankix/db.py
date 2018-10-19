@@ -218,7 +218,14 @@ class Card(BaseModel):
     }
 
     def _pre_render(self, html, is_question):
-        html = re.sub(r'{{#[^}]+}}([^{]*){{/[^}]+}}', '\g<1>', html)
+        def _sub(x):
+            field_k, content = x.groups()
+            if self.note.data[field_k]:
+                return content
+            else:
+                return ''
+
+        html = re.sub(r'{{#([^}]+)}}(.*){{/\1}}', _sub, html, flags=re.DOTALL)
 
         for k, v in self.note.data.items():
             html = html.replace('{{%s}}' % k, v)
@@ -257,7 +264,7 @@ class Card(BaseModel):
     @property
     def html(self):
         return f'''
-        <style>{self.css}</style>
+        <style>{self.question.raw_css}</style>
         <div id='c{self.id}'>
             <br/>
             <div id='q{self.id}'>{self.question.raw}</div>

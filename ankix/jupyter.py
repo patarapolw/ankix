@@ -32,7 +32,7 @@ class HTML:
     @property
     def html(self):
         return f'''
-        <style>{self._css}</style>
+        <style>{self.raw_css}</style>
         <br/>
         {self.raw}
         '''
@@ -50,12 +50,19 @@ class HTML:
         return result
 
     @property
-    def _css(self):
+    def raw_css(self):
+        css = '''
+        div {
+            display: block;
+        }
+        span {
+            display: inline-block;
+        }
+        '''
+
         if self.model:
-            css = self.model.css
+            css += self.model.css
             for font in self.model.fonts:
                 css = css.replace(font.name, font.src)
 
-            return css
-        else:
-            return ''
+        return css
