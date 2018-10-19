@@ -51,14 +51,7 @@ class HTML:
 
     @property
     def raw_css(self):
-        css = '''
-        div {
-            display: block;
-        }
-        span {
-            display: inline-block;
-        }
-        '''
+        css = ''
 
         if self.model:
             css += self.model.css
