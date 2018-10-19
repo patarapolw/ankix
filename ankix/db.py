@@ -1,22 +1,27 @@
 import peewee as pv
-from playhouse import sqlite_ext
+from playhouse import sqlite_ext, signals
 from playhouse.shortcuts import model_to_dict
 
 from datetime import datetime, timedelta
+from pytimeparse.timeparse import timeparse
 import random
 import sys
 import datauri
 import re
+import json
 
 from .config import config
 from .jupyter import HTML
-from .util import MediaType
+from .util import MediaType, parse_srs
 
 database = sqlite_ext.SqliteDatabase(config['database'])
 
 
-class BaseModel(pv.Model):
+class BaseModel(signals.Model):
     viewer_config = dict()
+
+    def to_viewer(self):
+        return model_to_dict(self)
 
     @classmethod
     def get_viewer(cls, records):
@@ -26,6 +31,40 @@ class BaseModel(pv.Model):
 
     class Meta:
         database = database
+
+
+class Settings(BaseModel):
+    DEFAULT = config.to_db()
+
+    markdown = pv.BooleanField(default=DEFAULT['markdown'])
+    _srs = pv.TextField(default=DEFAULT['srs'])
+
+    @classmethod
+    def to_dict(cls):
+        db_settings = cls.get()
+        d = model_to_dict(db_settings)
+        d.pop('_srs')
+        d['srs'] = db_settings.srs
+
+        return d
+
+    @property
+    def srs(self):
+        d = dict()
+        for i, s in enumerate(json.loads(str(self._srs))):
+            d[i] = timedelta(seconds=timeparse(s))
+
+        return d
+
+    @srs.setter
+    def srs(self, value):
+        self._srs = parse_srs(value, self.srs)
+        self.save()
+
+
+@signals.post_save(sender=Settings)
+def auto_update_config(model_class, instance, created):
+    config.update(model_class.to_dict())
 
 
 class Tag(BaseModel):
@@ -196,6 +235,16 @@ class Card(BaseModel):
     srs_level = pv.IntegerField(null=True)
     next_review = pv.DateTimeField(null=True)
 
+    @property
+    def css(self):
+        return self.template.model.css
+
+    @css.setter
+    def css(self, value):
+        db_model = self.template.model
+        db_model.css = value
+        db_model.save()
+
     def to_viewer(self):
         d = model_to_dict(self)
         d.update({
@@ -348,5 +397,5 @@ class Card(BaseModel):
 def create_all_tables():
     for cls in sys.modules[__name__].__dict__.values():
         if hasattr(cls, '__bases__') and issubclass(cls, pv.Model):
-            if cls not in (BaseModel, pv.Model):
+            if cls not in {BaseModel, pv.Model, signals.Model}:
                 cls.create_table()

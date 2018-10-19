@@ -22,6 +22,7 @@ class Ankix:
         db.create_all_tables()
 
         self.tables = {
+            'settings': db.Settings,
             'tag': db.Tag,
             'media': db.Media,
             'model': db.Model,
@@ -32,6 +33,11 @@ class Ankix:
             'note_media': db.NoteMedia,
             'card': db.Card
         }
+
+        if db.Settings.get_or_none() is None:
+            db.Settings().save()
+        else:
+            config.update(db.Settings.to_dict())
 
     def __getitem__(self, item):
         return self.tables[item]
