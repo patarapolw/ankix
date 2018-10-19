@@ -1,5 +1,8 @@
 # Ankix
 
+[![PyPI version shields.io](https://img.shields.io/pypi/v/ankix.svg)](https://pypi.python.org/pypi/ankix/)
+[![PyPI license](https://img.shields.io/pypi/l/ankix.svg)](https://pypi.python.org/pypi/ankix/)
+
 New file format for Anki with improved review intervals. Pure [peewee](https://github.com/coleifer/peewee) SQLite database, no zipfile. Available to work with on Jupyter Notebook.
 
 ## Usage

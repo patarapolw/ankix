@@ -29,6 +29,7 @@ class BaseModel(pv.Model):
 
 class Tag(BaseModel):
     name = pv.TextField(unique=True, collation='NOCASE')
+
     # notes
 
     def __repr__(self):
@@ -44,6 +45,7 @@ class Tag(BaseModel):
 class Media(BaseModel):
     name = pv.TextField(unique=True)
     data = pv.BlobField()
+
     # notes
 
     def __repr__(self):
@@ -77,6 +79,7 @@ class Media(BaseModel):
 class Model(BaseModel):
     name = pv.TextField(unique=True)
     css = pv.TextField()
+
     # templates
 
     def __repr__(self):
@@ -197,6 +200,16 @@ class Card(BaseModel):
     }
 
     def _pre_render(self, html, is_question):
+        def _sub(x):
+            field_k, content = x.groups()
+
+            if self.note.data[field_k]:
+                return content
+            else:
+                return ''
+
+        html = re.sub(r'{{#([^}]+)}}(.*){{/\1}}', _sub, html, flags=re.DOTALL)
+
         for k, v in self.note.data.items():
             html = html.replace('{{%s}}' % k, v)
             html = html.replace('{{cloze:%s}}' % k, v)
@@ -250,7 +263,7 @@ class Card(BaseModel):
             if(el.style.display === 'none') el.style.display = 'block';
             else el.style.display = 'none';
         }}
-        
+
         document.getElementById('c{self.id}').addEventListener('click', ()=>{{
             toggleHidden(document.getElementById('q{self.id}'));
             toggleHidden(document.getElementById('a{self.id}'));
@@ -314,11 +327,7 @@ class Card(BaseModel):
             query = query.join(Deck).where(Deck.name == deck)
 
         if tags:
-            query_params = (Tag.name == tags[0])
-            for tag in tags[1:]:
-                query_params = (query_params | (Tag.name == tag))
-
-            query = query.join(Note).join(NoteTag).join(Tag).where(query_params)
+            query = query.join(Note).join(NoteTag).join(Tag).where(Tag.name.in_(tags))
 
         return query.order_by(cls.next_review.desc())
 
