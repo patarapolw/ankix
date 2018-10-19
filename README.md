@@ -27,12 +27,15 @@ To view the internal working mechanism, and make use of Peewee capabilities,
 
 ```python
 >>> db.tables
-{'tag': <Model: Tag>,
+{'settings': <Model: Settings>,
+ 'tag': <Model: Tag>,
  'media': <Model: Media>,
  'model': <Model: Model>,
  'template': <Model: Template>,
  'deck': <Model: Deck>,
  'note': <Model: Note>,
+ 'note_tag': <Model: NoteTagThrough>,
+ 'note_media': <Model: NoteMediaThrough>,
  'card': <Model: Card>}
  >>> db['card'].select().join(db['note']).where(db['note'].data['field_a'] == 'bar')[0]
  'The front side of the card is shown.'
