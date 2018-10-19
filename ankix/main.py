@@ -8,6 +8,7 @@ import re
 import logging
 
 from .config import config
+from .util import MediaType
 
 
 class Ankix:
@@ -46,6 +47,14 @@ class Ankix:
 
     @classmethod
     def from_apkg(cls, src_apkg, dst_ankix=None, skip_media=False, **kwargs):
+        """
+
+        :param src_apkg:
+        :param dst_ankix:
+        :param bool|list skip_media:
+        :param kwargs:
+        :return:
+        """
         if dst_ankix is None:
             dst_ankix = os.path.splitext(src_apkg)[0] + '.ankix'
 
@@ -74,6 +83,11 @@ class Ankix:
                         )
 
                         info.setdefault('model', dict())[int(model['id'])] = model
+                        for media_name in re.findall(r'url\([\'\"]((?!.*//)[^\'\"]+)[\'\"]\)', model['css']):
+                            info.setdefault('media', dict())\
+                                .setdefault(MediaType.font, dict())\
+                                .setdefault(media_name, [])\
+                                .append(model['id'])
 
                         for template in model['tmpls']:
                             db_template = db.Template.get_or_create(
@@ -98,6 +112,7 @@ class Ankix:
 
                         db_note = db.Note.create(
                             id=note['id'],
+                            model_id=note['mid'],
                             data=dict(zip(header, note['flds'].split('\u001f')))
                         )
 
@@ -110,8 +125,17 @@ class Ankix:
 
                         info.setdefault('note', dict())[note['id']] = dict(note)
 
-                        for media_name in re.findall(r'src=[\'\"]((?!//)[^\'\"]+)[\'\"]', note['flds']):
-                            info.setdefault('media', dict()).setdefault(media_name, []).append(note['id'])
+                        for media_name in re.findall(r'src=[\'\"]((?!.*//)[^\'\"]+)[\'\"]', note['flds']):
+                            info.setdefault('media', dict())\
+                                .setdefault(MediaType.image, dict())\
+                                .setdefault(media_name, [])\
+                                .append(note['id'])
+
+                        for media_name in re.findall(r'\[sound:[^\]]+\]', note['flds']):
+                            info.setdefault('media', dict()) \
+                                .setdefault(MediaType.audio, dict()) \
+                                .setdefault(media_name, []) \
+                                .append(note['id'])
 
                     c = conn.execute('''SELECT * FROM cards''')
                     for card in tqdm(c.fetchall(), desc='cards'):
@@ -145,9 +169,12 @@ class Ankix:
                     conn.close()
 
                 if not skip_media:
+                    if skip_media is False:
+                        skip_media = [MediaType.image, MediaType.audio, MediaType.font]
+
                     with open(os.path.join(temp_dir, 'media')) as f:
                         info_media = info.get('media', dict())
-                        for media_id, media_name in tqdm(json.load(f).items(), desc='medias'):
+                        for media_id, media_name in tqdm(json.load(f).items(), desc='media'):
                             with open(os.path.join(temp_dir, media_id), 'rb') as image_f:
                                 db_media = db.Media.create(
                                     id=int(media_id),
@@ -155,11 +182,20 @@ class Ankix:
                                     data=image_f.read()
                                 )
 
-                                for note_id in info_media.get(media_name, []):
-                                    db_media.notes.add(db.Note.get(id=note_id))
+                                if MediaType.image not in skip_media:
+                                    for note_id in info_media.get(MediaType.image, dict()).get(media_name, []):
+                                        db_media.notes.add(db.Note.get(id=note_id))
 
-                                if not db_media.notes:
-                                    logging.error('%s not connected to Notes. Deleting...', media_name)
+                                if MediaType.audio not in skip_media:
+                                    for note_id in info_media.get(MediaType.audio, dict()).get(media_name, []):
+                                        db_media.notes.add(db.Note.get(id=note_id))
+
+                                if MediaType.font not in skip_media:
+                                    for model_id in info_media.get(MediaType.font, dict()).get(media_name, []):
+                                        db_media.models.add(db.Model.get(id=model_id))
+
+                                if not db_media.notes and db_media.models:
+                                    logging.error('%s not connected to Notes or Models. Deleting...', media_name)
                                     db_media.delete_instance()
 
         return cls(dst_ankix, **kwargs)

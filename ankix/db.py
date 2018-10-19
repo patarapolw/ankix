@@ -10,6 +10,7 @@ import re
 
 from .config import config
 from .jupyter import HTML
+from .util import MediaType
 
 database = sqlite_ext.SqliteDatabase(config['database'])
 
@@ -29,7 +30,6 @@ class BaseModel(pv.Model):
 
 class Tag(BaseModel):
     name = pv.TextField(unique=True, collation='NOCASE')
-
     # notes
 
     def __repr__(self):
@@ -44,8 +44,9 @@ class Tag(BaseModel):
 
 class Media(BaseModel):
     name = pv.TextField(unique=True)
+    type_ = pv.TextField(default=MediaType.font)
     data = pv.BlobField()
-
+    # models (for css)
     # notes
 
     def __repr__(self):
@@ -57,11 +58,17 @@ class Media(BaseModel):
 
     @property
     def html(self):
-        return f'<img src="{self.src}" />'
+        if self.type_ == MediaType.font:
+            return f'<img src="{self.src}" />'
+        elif self.type_ == MediaType.audio:
+            return f'<audio controls src="{self.src}" />'
+        else:
+            return f'<pre>{repr(self)}</pre>'
 
     def to_viewer(self):
         d = model_to_dict(self)
         d['data'] = self.html
+        d['models'] = [repr(m) for m in self.models]
         d['notes'] = [repr(n) for n in self.notes]
 
         return d
@@ -79,7 +86,7 @@ class Media(BaseModel):
 class Model(BaseModel):
     name = pv.TextField(unique=True)
     css = pv.TextField()
-
+    fonts = pv.ManyToManyField(Media, backref='models')
     # templates
 
     def __repr__(self):
@@ -87,9 +94,13 @@ class Model(BaseModel):
 
     def to_viewer(self):
         d = model_to_dict(self)
+        d['fonts'] = [repr(f) for f in self.fonts]
         d['templates'] = [t.name for t in self.templates]
 
         return d
+
+
+ModelFont = Model.fonts.get_through_model()
 
 
 class Template(BaseModel):
@@ -140,7 +151,8 @@ class Deck(BaseModel):
 
 class Note(BaseModel):
     data = sqlite_ext.JSONField()
-    medias = pv.ManyToManyField(Media, backref='notes', on_delete='cascade')
+    model = pv.ForeignKeyField(Model, backref='notes')
+    media = pv.ManyToManyField(Media, backref='notes', on_delete='cascade')
     tags = pv.ManyToManyField(Tag, backref='notes', on_delete='cascade')
 
     def mark(self, tag):
@@ -148,6 +160,12 @@ class Note(BaseModel):
 
     def unmark(self, tag):
         Tag.get_or_create(name=tag)[0].notes.remove(self)
+
+    def rename_field(self, old_name, new_name):
+        for db_note in Note.select(Note.data, Note.model_id).where(model_id=self.model_id):
+            if old_name in db_note.data.keys():
+                db_note.data[new_name] = db_note.data.pop(old_name)
+                db_note.save()
 
     def to_viewer(self):
         d = model_to_dict(self)
@@ -167,7 +185,7 @@ class Note(BaseModel):
 
 
 NoteTag = Note.tags.get_through_model()
-NoteMedia = Note.medias.get_through_model()
+NoteMedia = Note.media.get_through_model()
 
 
 class Card(BaseModel):
@@ -200,15 +218,7 @@ class Card(BaseModel):
     }
 
     def _pre_render(self, html, is_question):
-        def _sub(x):
-            field_k, content = x.groups()
-
-            if self.note.data[field_k]:
-                return content
-            else:
-                return ''
-
-        html = re.sub(r'{{#([^}]+)}}(.*){{/\1}}', _sub, html, flags=re.DOTALL)
+        html = re.sub(r'{{#[^}]+}}([^{]*){{/[^}]+}}', '\g<1>', html)
 
         for k, v in self.note.data.items():
             html = html.replace('{{%s}}' % k, v)
@@ -229,8 +239,8 @@ class Card(BaseModel):
 
         return HTML(
             html,
-            medias=self.note.medias,
-            css=self.css
+            media=self.note.media,
+            model=self.template.model
         )
 
     @property
@@ -240,13 +250,9 @@ class Card(BaseModel):
 
         return HTML(
             html,
-            medias=self.note.medias,
-            css=self.css
+            media=self.note.media,
+            model=self.template.model
         )
-
-    @property
-    def css(self):
-        return self.template.model.css
 
     @property
     def html(self):
@@ -263,7 +269,7 @@ class Card(BaseModel):
             if(el.style.display === 'none') el.style.display = 'block';
             else el.style.display = 'none';
         }}
-
+        
         document.getElementById('c{self.id}').addEventListener('click', ()=>{{
             toggleHidden(document.getElementById('q{self.id}'));
             toggleHidden(document.getElementById('a{self.id}'));

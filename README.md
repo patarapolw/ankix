@@ -46,5 +46,4 @@ $ pip install ankix
 
 ## Plans
 
-- Add support for audio.
 - Test by using it a lot.

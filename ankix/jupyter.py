@@ -1,24 +1,24 @@
 import mistune
 
-from .util import is_html
+from .util import is_html, MediaType
 from .config import config
 
 markdown = mistune.Markdown()
 
 
 class HTML:
-    def __init__(self, html, medias=None, css=''):
-        if medias is None:
-            medias = []
+    def __init__(self, html, media=None, model=None):
+        if media is None:
+            media = []
 
-        self.medias = medias
+        self.media = media
 
         if config['markdown'] or not is_html(html):
             self._raw = markdown(html)
         else:
             self._raw = html
 
-        self.css = css
+        self.model = model
 
     def _repr_html_(self):
         return self.html
@@ -32,7 +32,7 @@ class HTML:
     @property
     def html(self):
         return f'''
-        <style>{self.css}</style>
+        <style>{self._css}</style>
         <br/>
         {self.raw}
         '''
@@ -41,7 +41,21 @@ class HTML:
     def raw(self):
         result = self._raw
 
-        for image in self.medias:
-            result = result.replace(image.name, image.src)
+        for medium in self.media:
+            if medium.type_ == MediaType.audio:
+                result = result.replace(f'[sound:{medium.name}]', medium.html)
+            else:
+                result = result.replace(medium.name, medium.src)
 
         return result
+
+    @property
+    def _css(self):
+        if self.model:
+            css = self.model.css
+            for font in self.model.fonts:
+                css = css.replace(font.name, font.src)
+
+            return css
+        else:
+            return ''
