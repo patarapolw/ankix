@@ -19,7 +19,8 @@ class Ankix:
         })
 
         from . import db
-        db.create_all_tables()
+        if not os.path.exists(database):
+            db.create_all_tables()
 
         self.tables = {
             'settings': db.Settings,
@@ -61,16 +62,18 @@ class Ankix:
         :param kwargs:
         :return:
         """
-        if dst_ankix is None:
-            dst_ankix = os.path.splitext(src_apkg)[0] + '.ankix'
-
         with TemporaryDirectory() as temp_dir:
-            config['database'] = dst_ankix
+            if not config['database']:
+                if dst_ankix is None:
+                    dst_ankix = os.path.splitext(src_apkg)[0] + '.ankix'
+                config['database'] = dst_ankix
+
             info = dict()
 
             from . import db
             # Tag Media Model Template Deck Note Card
-            db.create_all_tables()
+            if not os.path.exists(config['database']):
+                db.create_all_tables()
 
             with db.database.atomic():
                 with ZipFile(src_apkg) as zf:
@@ -204,4 +207,9 @@ class Ankix:
                                     logging.error('%s not connected to Notes or Models. Deleting...', media_name)
                                     db_media.delete_instance()
 
-        return cls(dst_ankix, **kwargs)
+        return cls(config['database'], **kwargs)
+
+    @classmethod
+    def migrate(cls, src_version, dst_version):
+        from .migration import do_migrate
+        do_migrate(src_version, dst_version)

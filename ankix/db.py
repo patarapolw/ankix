@@ -9,6 +9,7 @@ import sys
 import datauri
 import re
 import json
+import hashlib
 
 from .config import config
 from .jupyter import HTML
@@ -85,6 +86,7 @@ class Media(BaseModel):
     name = pv.TextField(unique=True)
     type_ = pv.TextField(default=MediaType.font)
     data = pv.BlobField()
+    h = pv.TextField(unique=True)
     # models (for css)
     # notes
 
@@ -122,11 +124,26 @@ class Media(BaseModel):
     }
 
 
+@signals.pre_save(sender=Media)
+def media_pre_save(model_class, instance, created):
+    instance.h = hashlib.md5(instance.data).hexdigest()
+
+
 class Model(BaseModel):
     name = pv.TextField(unique=True)
     css = pv.TextField()
     fonts = pv.ManyToManyField(Media, backref='models')
     # templates
+
+    @classmethod
+    def clean(cls):
+        i = 0
+        for db_model in cls.select():
+            if not db_model.templates:
+                i += 1
+                db_model.delete_instance()
+
+        return i
 
     def __repr__(self):
         return f'<Model: "{self.name}">'
@@ -147,6 +164,7 @@ class Template(BaseModel):
     name = pv.TextField()
     question = pv.TextField()
     answer = pv.TextField()
+    h = pv.TextField(unique=True)
 
     class Meta:
         indexes = (
@@ -175,6 +193,11 @@ class Template(BaseModel):
     }
 
 
+@signals.pre_save(sender=Template)
+def template_pre_save(model_class, instance, created):
+    instance.h = hashlib.md5((instance.question + instance.answer).encode()).hexdigest()
+
+
 class Deck(BaseModel):
     name = pv.TextField(unique=True)
 
@@ -193,6 +216,7 @@ class Note(BaseModel):
     model = pv.ForeignKeyField(Model, backref='notes')
     media = pv.ManyToManyField(Media, backref='notes', on_delete='cascade')
     tags = pv.ManyToManyField(Tag, backref='notes', on_delete='cascade')
+    h = pv.TextField(unique=True)
 
     def mark(self, tag):
         Tag.get_or_create(name=tag)[0].notes.add(self)
@@ -227,6 +251,15 @@ NoteTag = Note.tags.get_through_model()
 NoteMedia = Note.media.get_through_model()
 
 
+@signals.pre_save(sender=Note)
+def note_pre_save(model_class, instance, created):
+    for k, v in instance.data.items():
+        if not isinstance(v, str):
+            raise ValueError('Field {} is not string: {}'.format(k, v))
+
+    instance.h = hashlib.md5(json.dumps(instance.data, sort_keys=True).encode()).hexdigest()
+
+
 class Card(BaseModel):
     note = pv.ForeignKeyField(Note, backref='cards')
     deck = pv.ForeignKeyField(Deck, backref='cards')
@@ -234,6 +267,7 @@ class Card(BaseModel):
     cloze_order = pv.IntegerField(null=True)
     srs_level = pv.IntegerField(null=True)
     next_review = pv.DateTimeField(null=True)
+    h = pv.TextField(unique=True)
 
     @property
     def css(self):
@@ -392,6 +426,11 @@ class Card(BaseModel):
             query = query.join(Note).join(NoteTag).join(Tag).where(Tag.name.in_(tags))
 
         return query.order_by(cls.next_review.desc())
+
+
+@signals.pre_save(sender=Card)
+def card_pre_save(model_class, instance, created):
+    instance.h = hashlib.md5(instance.question.raw.encode()).hexdigest()
 
 
 def create_all_tables():

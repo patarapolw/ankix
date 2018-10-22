@@ -5,7 +5,7 @@ from .util import parse_srs
 
 class Config(dict):
     DEFAULT = {
-        'database': 'default.ankix',
+        'database': '',
         'markdown': True,
         'srs': [
             timedelta(minutes=10),  # 0
