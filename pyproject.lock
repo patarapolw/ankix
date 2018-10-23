@@ -84,6 +84,7 @@ python-magic = "*"
 reference = "efc5dd46733fe87ec066f2a9294d57fad8e2f50d"
 type = "git"
 url = "https://github.com/patarapolw/python-data-uri.git"
+
 [[package]]
 category = "dev"
 description = "Better living through Python with decorators"
@@ -699,7 +700,7 @@ platform = "win32"
 python = "<3.6"
 
 [metadata]
-content-hash = "d83f7edd6be92f140f71157b28fcf4656a79b187649b0206558fb7d79628324b"
+content-hash = "fbe427b86b9b0c8949b0a0192744f78d131a8074bc9a2d75a1efca41109d8e79"
 platform = "*"
 python-versions = "*"
 

@@ -15,7 +15,7 @@ from .config import config
 from .jupyter import HTML
 from .util import MediaType, parse_srs
 
-database = sqlite_ext.SqliteDatabase(config['database'])
+database = sqlite_ext.SqliteDatabase(None)
 
 
 class BaseModel(signals.Model):
@@ -131,7 +131,7 @@ def media_pre_save(model_class, instance, created):
 
 class Model(BaseModel):
     name = pv.TextField(unique=True)
-    css = pv.TextField()
+    css = pv.TextField(default='')
     fonts = pv.ManyToManyField(Media, backref='models')
     # templates
 

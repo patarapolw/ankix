@@ -5,7 +5,6 @@ from .util import parse_srs
 
 class Config(dict):
     DEFAULT = {
-        'database': '',
         'markdown': True,
         'srs': [
             timedelta(minutes=10),  # 0
@@ -32,6 +31,8 @@ class Config(dict):
             }.get(k, lambda x: x)(v)
 
         return d
+
+
 
 
 config = Config()
