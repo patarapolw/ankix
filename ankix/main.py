@@ -332,3 +332,6 @@ class Ankix:
             db_query = self._get_notes_query(db_query, model_name=model_name, deck_name=deck_name, **note_data)
 
         return db_query
+
+    def preview_template(self, question, answer, css='', model_name=None):
+        return self['template'].preview(question=question, answer=answer, css=css, model_name=model_name)

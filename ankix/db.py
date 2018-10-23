@@ -10,6 +10,7 @@ import datauri
 import re
 import json
 import hashlib
+from uuid import uuid4
 
 from .config import config
 from .jupyter import HTML
@@ -191,6 +192,47 @@ class Template(BaseModel):
             'answer': 400
         }
     }
+
+    @classmethod
+    def preview(cls, question, answer, css='', model_name=None, _id=None):
+        if model_name:
+            css = Model.get(name=model_name).css
+
+        if _id is None:
+            _id = str(uuid4())
+
+        return HTML(f'''
+        <style>{css}</style>
+        <div id='c{_id}'>
+            <br/>
+            <div id='q{_id}'>{question}</div>
+            <div id='a{_id}' style='display: none;'>{answer}</div>
+        </div>
+
+        <script>
+        function toggleHidden(el){{
+            if(el.style.display === 'none') el.style.display = 'block';
+            else el.style.display = 'none';
+        }}
+
+        document.getElementById('c{_id}').addEventListener('click', ()=>{{
+            toggleHidden(document.getElementById('q{_id}'));
+            toggleHidden(document.getElementById('a{_id}'));
+        }})
+        </script>
+        ''')
+
+    @property
+    def html(self):
+        return self.preview(
+            question=self.question,
+            answer=self.answer,
+            css=self.model.css,
+            _id=self.id
+        ).html
+
+    def _repr_html_(self):
+        return self.html
 
 
 @signals.pre_save(sender=Template)
