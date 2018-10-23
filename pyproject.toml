@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ankix"
-version = "0.1.5"
+version = "0.1.6"
 description = "New file format for Anki with improved review intervals and Peewee SQLite powered"
 authors = ["Pacharapol Withayasakpunt <patarapolw@gmail.com>"]
 license = "MIT"

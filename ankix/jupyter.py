@@ -1,9 +1,5 @@
-import mistune
-
-from .util import is_html, MediaType
+from .util import is_html, MediaType, do_markdown
 from .config import config
-
-markdown = mistune.Markdown()
 
 
 class HTML:
@@ -12,12 +8,7 @@ class HTML:
             media = []
 
         self.media = media
-
-        if config['markdown'] or not is_html(html):
-            self._raw = markdown(html)
-        else:
-            self._raw = html
-
+        self._raw = do_markdown(html)
         self.model = model
 
     def _repr_html_(self):

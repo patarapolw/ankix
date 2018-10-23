@@ -7,6 +7,7 @@ import os
 import re
 import logging
 import magic
+import peewee
 
 from .config import config
 from .util import MediaType
@@ -228,15 +229,23 @@ class Ankix:
 
         return db_model
 
+    def get_model(self, model_name):
+        return self['model'].get_or_none(name=model_name)
+
     def get_models(self, model_name):
         db_query = self['model'].select()\
             .where(self['model'].name.contains(model_name))
 
         return db_query
 
-    def add_note(self, note_data, model, card_to_decks: list, media_list: list=None):
+    def add_note(self, note_data, model, card_to_decks: dict, media: dict=None, tags: list=None):
+        if media is None:
+            media = dict()
+        if tags is None:
+            tags = list()
+
         with self.database.atomic():
-            if isinstance(model, int) or model.isdigit():
+            if isinstance(model, int) or (isinstance(model, str) and model.isdigit()):
                 db_model = self['model'].get(id=int(model))
             elif isinstance(model, db.Model):
                 db_model = model
@@ -248,15 +257,15 @@ class Ankix:
                 model_id=db_model.id
             )
 
-            for deck, template in card_to_decks:
-                if isinstance(deck, int) or deck.isdigit():
+            for template, deck in card_to_decks.items():
+                if isinstance(deck, int) or (isinstance(deck, str) and deck.isdigit()):
                     db_deck = self['deck'].get(id=int(deck))
                 elif isinstance(deck, db.Deck):
                     db_deck = deck
                 else:
                     db_deck = self['deck'].get_or_create(name=deck)[0]
 
-                if isinstance(template, int) or template.isdigit():
+                if isinstance(template, int) or (isinstance(template, str) and template.isdigit()):
                     db_template = self['template'].get(id=int(template))
                 elif isinstance(template, db.Template):
                     db_template = template
@@ -265,11 +274,11 @@ class Ankix:
 
                 self['card'].create(
                     note_id=db_note.id,
-                    deck_id=db_deck.di,
+                    deck_id=db_deck.id,
                     template_id=db_template.id
                 )
 
-            for media_name, media_path in media_list:
+            for media_name, media_path in media.items():
                 type_ = {
                     'audio': MediaType.audio,
                     'font': MediaType.font
@@ -281,6 +290,9 @@ class Ankix:
                         data=f.read(),
                         type_=type_
                     )
+
+            for tag_name in tags:
+                self['tag'].get_or_create(name=tag_name)[0].notes.add(db_note)
 
         return db_note
 
@@ -314,6 +326,13 @@ class Ankix:
         )
 
         return db_template
+
+    def get_template(self, model_name, template_name):
+        try:
+            return self['template'].select().join(self['model'])\
+                .where((self['template'].name == template_name) & (self['model'].name == model_name))
+        except peewee.OperationalError:
+            return None
 
     def get_templates(self, model_name=None, template_name=None, question=None, answer=None):
         db_query = self['template'].select()

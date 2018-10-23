@@ -13,7 +13,7 @@ import hashlib
 
 from .config import config
 from .jupyter import HTML
-from .util import MediaType, parse_srs
+from .util import MediaType, parse_srs, do_markdown
 from .preview import TemplateMaker
 
 database = sqlite_ext.SqliteDatabase(None)
@@ -193,16 +193,10 @@ class Template(BaseModel):
         }
     }
 
-    @classmethod
-    def preview(cls, question, answer, css='', model_name=None, _id=None):
-        if model_name:
-            css = Model.get(name=model_name).css
-
-        return TemplateMaker(question=question, answer=answer, css=css, _id=_id)
-
     @property
     def html(self):
-        return self.preview(
+        return TemplateMaker(
+            name=self.name,
             question=self.question,
             answer=self.answer,
             css=self.model.css,
@@ -273,11 +267,18 @@ NoteMedia = Note.media.get_through_model()
 
 @signals.pre_save(sender=Note)
 def note_pre_save(model_class, instance, created):
+    d = dict()
     for k, v in instance.data.items():
-        if not isinstance(v, str):
+        if v in {None, ''}:
+            continue
+
+        if isinstance(v, (str, int, float, bool)):
+            d[k] = v
+        else:
             raise ValueError('Field {} is not string: {}'.format(k, v))
 
-    instance.h = hashlib.md5(json.dumps(instance.data, sort_keys=True).encode()).hexdigest()
+    instance.data = d
+    instance.h = hashlib.md5(json.dumps(d, sort_keys=True).encode()).hexdigest()
 
 
 class Card(BaseModel):
@@ -331,8 +332,8 @@ class Card(BaseModel):
         html = re.sub(r'{{#([^}]+)}}(.*){{/\1}}', _sub, html, flags=re.DOTALL)
 
         for k, v in self.note.data.items():
-            html = html.replace('{{%s}}' % k, v)
-            html = html.replace('{{cloze:%s}}' % k, v)
+            html = html.replace('{{%s}}' % k, do_markdown(str(v)))
+            html = html.replace('{{cloze:%s}}' % k, do_markdown(str(v)))
             if self.cloze_order is not None:
                 if is_question:
                     html = re.sub(r'{{c%d::([^}]+)}}' % self.cloze_order,
@@ -340,6 +341,8 @@ class Card(BaseModel):
 
                 html = re.sub(r'{{c\d+::([^}]+)}}',
                               '\g<1>', html)
+
+        html = re.sub('{{[^}]+}}', '', html)
 
         return html
 
@@ -367,6 +370,7 @@ class Card(BaseModel):
     @property
     def html(self):
         return TemplateMaker(
+            name=self.template.name,
             question=self.question.raw,
             answer=self.answer.raw,
             css=self.question.raw_css,

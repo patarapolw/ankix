@@ -41,6 +41,10 @@ To view the internal working mechanism, and make use of Peewee capabilities,
  'The front side of the card is shown.'
 ```
 
+## Adding new cards
+
+Adding new cards is now possible. This has been tested in https://github.com/patarapolw/zhlib/blob/master/zhlib/export.py#L15
+
 ## Installation
 
 ```commandline

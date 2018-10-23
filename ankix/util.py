@@ -2,7 +2,9 @@ import re
 import json
 from datetime import timedelta
 from pytimeparse.timeparse import timeparse
+import mistune
 
+markdown = mistune.Markdown()
 RE_IS_HTML = re.compile(r"(?:</[^<]+>)|(?:<[^<]+/>)")
 
 
@@ -35,3 +37,11 @@ def parse_srs(value, default):
         raise ValueError
 
     return json.dumps([timedelta2str(x) for x in value])
+
+
+def do_markdown(s):
+    from .config import config
+    if config.get('markdown'):
+        return markdown(s)
+
+    return s

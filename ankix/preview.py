@@ -1,11 +1,16 @@
 from uuid import uuid4
+import re
+
+from .util import do_markdown
 
 
 class TemplateMaker:
-    def __init__(self, question, answer, css='', _id=None):
-        self.question = question
-        self.answer = answer
+    def __init__(self, name, question, answer, css='', _id=None):
+        self.name = name
+        self.question = do_markdown(question)
+        self.answer = do_markdown(answer)
         self.css = css
+        self.sample = dict()
 
         if _id is None:
             self._id = str(uuid4())
@@ -14,7 +19,7 @@ class TemplateMaker:
 
     @property
     def html(self):
-        return f'''
+        raw = f'''
         <style>{self.css}</style>
         <div id='c{self._id}'>
             <br/>
@@ -35,8 +40,19 @@ class TemplateMaker:
         </script>
         '''
 
+        for k, v in self.sample.items():
+            raw = raw.replace('{{%s}}' % k, do_markdown(str(v)))
+            raw = raw.replace('{{cloze:%s}}' % k, do_markdown(str(v)))
+
+        raw = re.sub('{{[^}]+}}', '', raw)
+
+        return raw
+
     def _repr_html_(self):
         return self.html
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def get_sample(self, **kwargs):
+        self.sample.update(kwargs)
