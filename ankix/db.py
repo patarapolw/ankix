@@ -10,11 +10,11 @@ import datauri
 import re
 import json
 import hashlib
-from uuid import uuid4
 
 from .config import config
 from .jupyter import HTML
 from .util import MediaType, parse_srs
+from .preview import TemplateMaker
 
 database = sqlite_ext.SqliteDatabase(None)
 
@@ -198,29 +198,7 @@ class Template(BaseModel):
         if model_name:
             css = Model.get(name=model_name).css
 
-        if _id is None:
-            _id = str(uuid4())
-
-        return HTML(f'''
-        <style>{css}</style>
-        <div id='c{_id}'>
-            <br/>
-            <div id='q{_id}'>{question}</div>
-            <div id='a{_id}' style='display: none;'>{answer}</div>
-        </div>
-
-        <script>
-        function toggleHidden(el){{
-            if(el.style.display === 'none') el.style.display = 'block';
-            else el.style.display = 'none';
-        }}
-
-        document.getElementById('c{_id}').addEventListener('click', ()=>{{
-            toggleHidden(document.getElementById('q{_id}'));
-            toggleHidden(document.getElementById('a{_id}'));
-        }})
-        </script>
-        ''')
+        return TemplateMaker(question=question, answer=answer, css=css, _id=_id)
 
     @property
     def html(self):
@@ -388,26 +366,12 @@ class Card(BaseModel):
 
     @property
     def html(self):
-        return f'''
-        <style>{self.question.raw_css}</style>
-        <div id='c{self.id}'>
-            <br/>
-            <div id='q{self.id}'>{self.question.raw}</div>
-            <div id='a{self.id}' style='display: none;'>{self.answer.raw}</div>
-        </div>
-
-        <script>
-        function toggleHidden(el){{
-            if(el.style.display === 'none') el.style.display = 'block';
-            else el.style.display = 'none';
-        }}
-        
-        document.getElementById('c{self.id}').addEventListener('click', ()=>{{
-            toggleHidden(document.getElementById('q{self.id}'));
-            toggleHidden(document.getElementById('a{self.id}'));
-        }})
-        </script>
-        '''
+        return TemplateMaker(
+            question=self.question.raw,
+            answer=self.answer.raw,
+            css=self.question.raw_css,
+            _id=self.id
+        ).html
 
     def _repr_html_(self):
         return self.html

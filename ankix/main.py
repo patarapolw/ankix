@@ -208,13 +208,22 @@ class Ankix:
     def migrate(self, src_version, dst_version):
         do_migrate(src_version, dst_version)
 
-    def add_model(self, model_name, templates: list, css=''):
+    def add_model(self, model_name, templates, css=''):
+        """
+
+        :param model_name:
+        :param list templates: list of dict or list of TemplateMaker
+        :param css:
+        :return:
+        """
         with self.database.atomic():
             db_model = self['model'].create(name=model_name, css=css)
             for template in templates:
                 self['template'].create(
                     model_id=db_model.id,
-                    **template
+                    name=template['name'],
+                    question=template['question'],
+                    answer=template['answer']
                 )
 
         return db_model
@@ -229,6 +238,8 @@ class Ankix:
         with self.database.atomic():
             if isinstance(model, int) or model.isdigit():
                 db_model = self['model'].get(id=int(model))
+            elif isinstance(model, db.Model):
+                db_model = model
             else:
                 db_model = self['model'].get(name=model)
 
@@ -240,11 +251,15 @@ class Ankix:
             for deck, template in card_to_decks:
                 if isinstance(deck, int) or deck.isdigit():
                     db_deck = self['deck'].get(id=int(deck))
+                elif isinstance(deck, db.Deck):
+                    db_deck = deck
                 else:
                     db_deck = self['deck'].get_or_create(name=deck)[0]
 
                 if isinstance(template, int) or template.isdigit():
                     db_template = self['template'].get(id=int(template))
+                elif isinstance(template, db.Template):
+                    db_template = template
                 else:
                     db_template = self['template'].get(name=template)
 
@@ -332,6 +347,3 @@ class Ankix:
             db_query = self._get_notes_query(db_query, model_name=model_name, deck_name=deck_name, **note_data)
 
         return db_query
-
-    def preview_template(self, question, answer, css='', model_name=None):
-        return self['template'].preview(question=question, answer=answer, css=css, model_name=model_name)
