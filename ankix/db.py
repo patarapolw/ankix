@@ -359,19 +359,23 @@ class Note(BaseModel):
         return db_note
 
     @classmethod
-    def search(cls, model_name=None, deck_name=None, tags=None, data=None):
+    def search(cls, model_name=None, deck_name=None, tags=None, data=None, **kwargs):
         db_query = cls.select()
         if deck_name:
             db_query = db_query \
                 .join(Card).join(Deck) \
                 .where(Deck.name.contains(deck_name))
 
-        db_query = cls._build_query(db_query, model_name=model_name, tags=tags, data=data)
+        db_query = cls._build_query(db_query, model_name=model_name, tags=tags, data=data, **kwargs)
 
         return db_query
 
     @classmethod
-    def _build_query(cls, db_query, model_name=None, tags=None, data=None):
+    def _build_query(cls, db_query, model_name=None, tags=None, data=None, **kwargs):
+        if data is None:
+            data = dict()
+        data.update(kwargs)
+
         db_query = db_query.switch(cls)
 
         if data:
@@ -456,7 +460,7 @@ class Card(BaseModel):
         return db_card
 
     @classmethod
-    def search(cls, template_name=None, model_name=None, deck_name=None, tags=None, note_data=Note):
+    def search(cls, template_name=None, model_name=None, deck_name=None, tags=None, data=None, **kwargs):
         db_query = cls.select()
         if template_name:
             db_query = db_query.join(Template).where(Template.name.contains(template_name))
@@ -464,8 +468,8 @@ class Card(BaseModel):
             db_query = db_query.switch(cls) \
                 .join(Deck) \
                 .where(Deck.name.contains(deck_name))
-        if note_data:
-            db_query = Note._build_query(db_query, model_name=model_name, tags=tags, data=note_data)
+
+        db_query = Note._build_query(db_query, model_name=model_name, tags=tags, data=data, **kwargs)
 
         return db_query
 
