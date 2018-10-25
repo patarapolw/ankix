@@ -64,5 +64,9 @@ def do_migrate(src_version, dst_version, forced=False):
                         raise
                     else:
                         record.delete_instance()
+    elif (src_version, dst_version) == ('0.1.5', '0.1.6'):
+        migrate(
+            migrator.add_column('model', 'js', pv.TextField(default=''))
+        )
     else:
         raise ValueError('Not supported for {}, {}'.format(src_version, dst_version))

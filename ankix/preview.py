@@ -5,11 +5,12 @@ from .util import do_markdown
 
 
 class TemplateMaker:
-    def __init__(self, name, question, answer, css='', _id=None):
+    def __init__(self, name, question, answer, css='', js='', _id=None):
         self.name = name
         self.question = do_markdown(question)
         self.answer = do_markdown(answer)
         self.css = css
+        self.js = js
         self.sample = dict()
 
         if _id is None:
@@ -27,6 +28,7 @@ class TemplateMaker:
             <div id='a{self._id}' style='display: none;'>{self.answer}</div>
         </div>
 
+        <script>{self.js}</script>
         <script>
         function toggleHidden(el){{
             if(el.style.display === 'none') el.style.display = 'block';

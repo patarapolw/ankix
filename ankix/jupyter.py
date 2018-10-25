@@ -26,6 +26,7 @@ class HTML:
         <style>{self.raw_css}</style>
         <br/>
         {self.raw}
+        <script>{self.model.js}</script>
         '''
 
     @property
@@ -35,8 +36,8 @@ class HTML:
         for medium in self.media:
             if medium.type_ == MediaType.audio:
                 result = result.replace(f'[sound:{medium.name}]', medium.html)
-            else:
-                result = result.replace(medium.name, medium.src)
+
+            result = result.replace(medium.name, medium.src)
 
         return result
 

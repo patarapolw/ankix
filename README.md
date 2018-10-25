@@ -10,10 +10,10 @@ New file format for Anki with improved review intervals. Pure [peewee](https://g
 On Jupyter Notebook,
 
 ```python
->>> from ankix import Ankix
->>> db = Ankix.from_apkg('test.apkg', 'test.ankix')  # A file named 'test.ankix' will be created.
->>> # Or, db = Ankix('test.ankix')
->>> iter_quiz = db.iter_quiz()
+>>> from ankix import ankix, db as a
+>>> ankix.init('test.ankix')  # A file named 'test.ankix' will be created.
+>>> ankix.import_apkg('foo.apkg')  # Import the contents from 'foo.apkg'
+>>> iter_quiz = a.iter_quiz()
 >>> card = next(iter_quiz)
 >>> card
 'A flashcard is show on Jupyter Notebook. You can click to change card side, to answer-side.'
@@ -23,27 +23,48 @@ On Jupyter Notebook,
 >>> card.mark()  # Add the tag 'marked' to the note.
 ```
 
-To view the internal working mechanism, and make use of Peewee capabilities,
+You can directly make use of Peewee capabilities,
 
 ```python
->>> db.tables
-{'settings': <Model: Settings>,
- 'tag': <Model: Tag>,
- 'media': <Model: Media>,
- 'model': <Model: Model>,
- 'template': <Model: Template>,
- 'deck': <Model: Deck>,
- 'note': <Model: Note>,
- 'note_tag': <Model: NoteTagThrough>,
- 'note_media': <Model: NoteMediaThrough>,
- 'card': <Model: Card>}
- >>> db['card'].select().join(db['note']).where(db['note'].data['field_a'] == 'bar')[0]
+ >>> a.Card.select().join(a.Note).where(a.Note.data['field_a'] == 'bar')[0]
  'The front side of the card is shown.'
 ```
 
 ## Adding new cards
 
 Adding new cards is now possible. This has been tested in https://github.com/patarapolw/zhlib/blob/master/zhlib/export.py#L15
+
+```python
+from ankix import ankix, db as a
+ankix.init('test.ankix')
+a_model = a.Model.add(
+    name='foo',
+    templates=[
+        a.TemplateMaker(
+            name='Forward', 
+            question=Q_FORMAT,
+            answer=A_FORMAT
+        ),
+        a.TemplateMaker(
+            name='Reverse', 
+            question=Q_FORMAT,
+            answer=A_FORMAT)
+    ],
+    css=CSS,
+    js=JS
+)
+# Or, a_model = a.Model.get(name='foo')
+for record in records:
+    a.Note.add(
+        data=record,
+        model=a_model,
+        card_to_decks={
+            'Forward': 'Forward deck',
+            'Reverse': 'Reverse deck'
+        },
+        tags=['bar', 'baz']
+    )
+```
 
 ## Installation
 

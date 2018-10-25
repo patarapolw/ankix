@@ -1,10 +1,11 @@
 [tool.poetry]
 name = "ankix"
-version = "0.1.6"
+version = "0.2"
 description = "New file format for Anki with improved review intervals and Peewee SQLite powered"
 authors = ["Pacharapol Withayasakpunt <patarapolw@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+include = ["datauri/**/*.py"]
 repository = "https://github.com/patarapolw/ankix"
 homepage = "https://github.com/patarapolw/ankix"
 keywords = ["anki", "spaced-repetition", "SRS"]
@@ -14,11 +15,8 @@ python = "*"
 peewee = "^3.7"
 tqdm = "^4.27"
 mistune = "^0.8.4"
-datauri = {git = "https://github.com/patarapolw/python-data-uri.git"}
 pytimeparse = "^1.1"
 python-magic = "^0.4.15"
 
 [tool.poetry.dev-dependencies]
-jupyter = "^1.0"
-notebook = "^5.7"
 htmlviewer = "^0.1.7"

@@ -3,6 +3,9 @@ import json
 from datetime import timedelta
 from pytimeparse.timeparse import timeparse
 import mistune
+from pathlib import Path
+import base64
+import mimetypes
 
 markdown = mistune.Markdown()
 RE_IS_HTML = re.compile(r"(?:</[^<]+>)|(?:<[^<]+/>)")
@@ -45,3 +48,28 @@ def do_markdown(s):
         return markdown(s)
 
     return s
+
+
+def build_base64(fp):
+    """
+    Build data URI according to RFC 2397
+    (data:[<mediatype>][;base64],<data>)
+    :param str|Path|bytes fp:
+    :return:
+    """
+    if isinstance(fp, (str, Path)) and Path(fp).is_file():
+        b = Path(fp).read_bytes()
+        try:
+            import magic
+            mime = magic.from_file(fp, mime=True)
+        except ImportError:
+            mime, _ = mimetypes.guess_type(str(fp))
+    else:
+        import magic
+        b = fp
+        mime = magic.from_buffer(fp, mime=True)
+
+    data64 = base64.b64encode(b).decode()
+
+    return 'data:{};base64,{}'.format(mime, data64)
+

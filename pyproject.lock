@@ -69,23 +69,6 @@ version = "3.5.0"
 python = ">=2.7,<2.8"
 
 [[package]]
-category = "main"
-description = ""
-name = "datauri"
-optional = false
-platform = "*"
-python-versions = "*"
-version = "1.0.1"
-
-[package.dependencies]
-python-magic = "*"
-
-[package.source]
-reference = "efc5dd46733fe87ec066f2a9294d57fad8e2f50d"
-type = "git"
-url = "https://github.com/patarapolw/python-data-uri.git"
-
-[[package]]
 category = "dev"
 description = "Better living through Python with decorators"
 name = "decorator"
@@ -700,7 +683,7 @@ platform = "win32"
 python = "<3.6"
 
 [metadata]
-content-hash = "fbe427b86b9b0c8949b0a0192744f78d131a8074bc9a2d75a1efca41109d8e79"
+content-hash = "8a545bc877ff6c5686b5e5a91384b679e42c5f33558ae9a5751a369cae60d65b"
 platform = "*"
 python-versions = "*"
 
@@ -711,7 +694,6 @@ backcall = ["38ecd85be2c1e78f77fd91700c76e14667dc21e2713b63876c0eb901196e01e4", 
 bleach = ["48d39675b80a75f6d1c3bdbffec791cf0bbbab665cf01e20da701c77de278718", "73d26f018af5d5adcdabf5c1c974add4361a9c76af215fe32fdec8a6fc5fb9b9"]
 colorama = ["a3d89af5db9e9806a779a50296b5fdb466e281147c2c235e8225ecc6dbf7bbf3", "c9b54bebe91a6a803e0772c8561d53f2926bfeb17cd141fbabcb08424086595c"]
 configparser = ["5308b47021bc2340965c371f0f058cc6971a04502638d4244225c49d80db273a"]
-datauri = []
 decorator = ["2c51dff8ef3c447388fe5e4453d24a2bf128d3a4c32af3fabef1f01c6851ab82", "c39efa13fbdeb4506c476c9b3babf6a718da943dab7811c206005a4a956c080c"]
 defusedxml = ["24d7f2f94f7f3cb6061acb215685e5125fbcdc40a857eff9de22518820b0a4f4", "702a91ade2968a82beb0db1e0766a6a273f33d4616a6ce8cde475d8e09853b20"]
 entrypoints = ["10ad569bb245e7e2ba425285b9fa3e8178a0dc92fc53b1e1c553805e15a8825b", "d2d587dde06f99545fb13a383d2cd336a8ff1f359c5839ce3a64c917d10c029f"]
