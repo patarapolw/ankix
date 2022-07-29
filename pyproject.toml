@@ -14,7 +14,7 @@ keywords = ["anki", "spaced-repetition", "SRS"]
 python = "*"
 peewee = "^3.7"
 tqdm = "^4.27"
-mistune = "^0.8.4"
+mistune = ">=0.8.4,<2.1.0"
 pytimeparse = "^1.1"
 python-magic = "^0.4.15"
 
